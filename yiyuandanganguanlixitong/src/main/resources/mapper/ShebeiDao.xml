@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ShebeiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.shebei_name as shebeiName
+        ,a.shebei_uuid_number as shebeiUuidNumber
+        ,a.shebei_photo as shebeiPhoto
+        ,a.shengchanchangjia as shengchanchangjia
+        ,a.shebei_types as shebeiTypes
+        ,a.shebei_gongxiao_content as shebeiGongxiaoContent
+        ,a.shebei_jinji_content as shebeiJinjiContent
+        ,a.shebei_zhuyi_content as shebeiZhuyiContent
+        ,a.shebei_content as shebeiContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ShebeiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM shebei  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.shebeiName != '' and params.shebeiName != null and params.shebeiName != 'null' ">
+                and a.shebei_name like CONCAT('%',#{params.shebeiName},'%')
+            </if>
+            <if test=" params.shebeiUuidNumber != '' and params.shebeiUuidNumber != null and params.shebeiUuidNumber != 'null' ">
+                and a.shebei_uuid_number like CONCAT('%',#{params.shebeiUuidNumber},'%')
+            </if>
+            <if test=" params.shengchanchangjia != '' and params.shengchanchangjia != null and params.shengchanchangjia != 'null' ">
+                and a.shengchanchangjia like CONCAT('%',#{params.shengchanchangjia},'%')
+            </if>
+            <if test="params.shebeiTypes != null and params.shebeiTypes != ''">
+                and a.shebei_types = #{params.shebeiTypes}
+            </if>
+            <if test=" params.shebeiGongxiaoContent != '' and params.shebeiGongxiaoContent != null and params.shebeiGongxiaoContent != 'null' ">
+                and a.shebei_gongxiao_content like CONCAT('%',#{params.shebeiGongxiaoContent},'%')
+            </if>
+            <if test=" params.shebeiJinjiContent != '' and params.shebeiJinjiContent != null and params.shebeiJinjiContent != 'null' ">
+                and a.shebei_jinji_content like CONCAT('%',#{params.shebeiJinjiContent},'%')
+            </if>
+            <if test=" params.shebeiZhuyiContent != '' and params.shebeiZhuyiContent != null and params.shebeiZhuyiContent != 'null' ">
+                and a.shebei_zhuyi_content like CONCAT('%',#{params.shebeiZhuyiContent},'%')
+            </if>
+            <if test=" params.shebeiContent != '' and params.shebeiContent != null and params.shebeiContent != 'null' ">
+                and a.shebei_content like CONCAT('%',#{params.shebeiContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
